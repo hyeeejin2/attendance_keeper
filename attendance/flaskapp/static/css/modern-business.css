@@ -1,0 +1,88 @@
+/*!
+ * Start Bootstrap - Modern Business (https://startbootstrap.com/template-overviews/modern-business)
+ * Copyright 2013-2019 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-logomodern-business-nav/blob/master/LICENSE)
+ */
+body {
+  padding-top: 56px;
+}
+
+.carousel-item {
+  height: 65vh;
+  min-height: 300px;
+  background: no-repeat center center scroll;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+#back_color{
+  background-color: #fff;
+}
+.portfolio-item {
+  margin-bottom: 30px;
+}
+.article_search{
+  margin:10px auto;
+  text-align:center
+}
+.article_search_field, .article_search_submit{
+  border:solid 3px #70a1ff;
+  border-radius: 5px;
+  font-size:1.0em
+}
+.article_search_field{
+  width:60%;
+  height:50px;
+  padding-left:5px;
+  padding-top:2px
+}
+.article_search_submit{
+  width:10%;
+  height:50px;
+  background-color:#70a1ff;
+  padding-top: 3px;
+  color:#fff
+}
+.student_list{
+  border-collapse: separate;
+  border-spacing: 1px;
+  text-align:center;
+  line-height: 1.5;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  font-size: 13px;
+}
+.student_list tr:hover
+{
+  background-color: #f5f5f5;
+}
+.student_list th{
+  text-align: auto;
+  position:relative;
+  width: 150px;
+  padding: 15px;
+  font-weight: bold;
+  vertical-align:top;
+  border-top: 1px solid #ccc;
+  border-bottom:1px solid #ccc;
+}
+.student_list td{
+  text-align: center;
+  width: 350px;
+  padding: 10px;
+  vertical-align: top;
+  border-bottom: 1px solid #ccc;
+}
+.search_box {
+  height: 50px;
+  width: 150px;
+  padding: .8em .5em;
+  font-family: inherit;
+  background: url(../img/allow.jpg) no-repeat 95% 50%;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: 1px solid #999;
+  border-radius: 3px;
+}

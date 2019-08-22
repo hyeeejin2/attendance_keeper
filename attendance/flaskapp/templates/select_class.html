@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>강의 조회</title>
+  <script src="../static/vendor/jquery/jquery.min.js"></script>
+  <script src="../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="../static/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="../static/js/sb-admin-2.min.js"></script>
+
+  <!-- Page level plugins -->
+  <script src="../static/vendor/datatables/jquery.dataTables.min.js"></script>
+  <script src="../static/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+  <!-- Page level custom scripts -->
+  <script src="../static/js/demo/datatables-demo.js"></script>
+  <!-- Bootstrap core CSS -->
+  <link href="../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom styles for this template -->
+  <link href="../static/css/modern-business.css" rel="stylesheet">
+  <!-- Custom styles for this page -->
+  <link href="../static/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+</head>
+
+<body>
+	<form action="https://210.89.188.20/requestLecture" method="POST">
+  <!-- Navigation -->
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="https://210.89.188.20/">출석지킴이</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+	{% if not user %}
+          <li class="nav-item">
+            <a class="nav-link" href="https://210.89.188.20/login">로그인</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://210.89.188.20/tuteeSignup">튜티 회원가입(학생)</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://210.89.188.20/tutorSignup">튜터 회원가입(강의자)</a>
+          </li>
+	{% endif %}
+	  {% if user %}
+	  <li class="nav-item" style="margin-top:8px; margin-rignt:5px; color:#fff;">
+                  {{ user+string }}
+          </li>
+	  {% if tutor %}
+	  <li class="nav-item">
+            <a class="nav-link" href="https://210.89.188.20/tutorMypage">마이페이지</a>
+          </li>
+	  {% endif %}
+          {% if tutee %}
+	  <li class="nav-item">
+            <a class="nav-link" href="https://210.89.188.20/tuteeMypage">마이페이지</a>
+          </li>
+	  {% endif %}
+          <li class="nav-item">
+            <a class="nav-link" href="https://210.89.188.20/lectureList">강의 조회</a>
+	  <li class="nav-item">
+            <a class="nav-link" href="https://210.89.188.20/logout">로그아웃</a>
+          </li>
+          {% endif %}
+          {% if error %}
+                <script>
+                        var obj = {{ error | safe }};
+                        alert(obj['error']);
+                </script>
+          {% endif %}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Page Content -->
+  <div class="container">
+
+    <h1 class="my-4">강의 조회</h1>
+    <!-- Marketing Icons Section -->
+    <div class="row">
+      <div class="col-lg-11 mb-4" style="margin-left:3%;">
+        <div class="card h-100">
+          <h4 class="card-header">조회</h4>
+          <div class="card-body">
+            <div class="article_search">
+              <select name="search_box" class="search_box">
+                <option value="class_name" selected="selected">강의명</option>
+                <option value="tutor_name">강사명</option>
+                <option value="class_id">강의 코드</option>
+              </select>
+              <input type="text" class="article_search_field" name="search" value="" onkeypress="if (event.keyCode == 13) { try{window.location.href='/search/' + document.getElementsByName('search')[0].value.replaceAll('%', '%25');document.getElementsByName('search')[0].value = ''; return false;}catch(e){} }" id="article_search" />
+              <input type="button" id="search_class" class="article_search_submit" value="검색">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-11 mb-4" style="margin-left:3%;">
+        <div class="card h-100">
+          <h4 class="card-header">조회 결과</h4>
+          <div class="card-body">
+            <div class="table-responsive">
+              <div id="dataTable_wrapper" class="dataTables_wrapper dt-bootstrap4" style="width:95%;margin-left:22px;">
+                <table class="student_list" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                  <th class="sorting_asc" tabindex="0" aria-controls="dataTable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 177px;">
+                    번호
+                  </th>
+                  <th scope="row">강의명</th>
+                  <th scope="row">강사명</th>
+                  <th scope="row">강의 요일</th>
+                  <th scope="row">강의 시간</th>
+                  <th scope="row">강의 장소</th>
+                </thead>
+		<tbody name=start>
+                  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">강의 계획서</h5>
+                          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                          </button>
+                        </div>
+                        <!-- data-toggle="modal" data-target="#logoutModal" -->
+                        <div class="modal-body" id="orderDetails">
+
+                        </div>
+                        <div class="modal-footer">
+                          <a class="btn btn-danger" href="#">취소</a>
+                          <input type="submit" class="btn btn-primary"></input>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </tbody>
+                  </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <!-- /.row -->
+    <!--http://52.231.10.217/selectLecture-->
+    <script>
+    $('#dataTable').DataTable( {
+     ajax: {
+        url: '/lectureListProcess',
+        dataSrc: 'data'
+          },
+        columns: [{data:'class_id'},
+                  {data:'class_name'},
+                  {data:'tutor_id'},
+                  {data:'class_date'},
+                  {data:'class_time'},
+                  {data:'class_room'}
+                ]
+      });
+    </script>
+ <script>
+    $(document).ready(function(){
+	    var table = $('#example').DataTable();
+      $("#dataTable tbody").on('click', 'tr', function(){
+        $('#logoutModal').modal("show");
+        $.ajax({
+          dataType:'json',
+          method:'GET',
+          url:'/selectLecture',
+          data:{
+            class_id:$(this).find('td').html()
+          }
+        })
+        .done(function(json){
+          $("#orderDetails").html(
+          '<p> 강의명 : ' + json['data'][0]['class_name'] +'</p>'
+          +'<p> 강사명 : ' + json['data'][0]['tutor_id'] +'</p>'
+          +'<p> 강의 요일 : ' + json['data'][0]['class_date'] +'</p>'
+          +'<p> 강의 시간 : ' + json['data'][0]['class_time'] +'</p>'
+          +'<p> 강의 장소 : ' + json['data'][0]['class_room'] +'</p>'
+          +'<p> 강의 설명 : ' + json['data'][0]['class_describe'] +'</p>'
+	        +'<p> 강의 최대 인원 : '+ json['data'][0]['limit_entry']+'</p>'
+          +'<p> 강의 지각 기준 : ' + json['data'][0]['limit_late'] +'</p>'
+          +'<p> 강의 결석 기준 : ' + json['data'][0]['limit_fail'] +'</p>'
+		      +'<input type="hidden" name="class_id" value="' + json['data'][0]['class_id'] + '"> </input>'
+          );
+        });
+          })
+      });
+    </script>
+  </div>
+  <!-- /.container -->
+<!--
+class_name':row[0],
+'tutor_id':row[1],
+ 'class_date':row[2],
+ 'class_time':row[3],
+  'class_room':row[4],
+   'class_describe':row[5],
+   'limit_entry':row[6],
+   'limit_late':row[7],
+    'limit_fail':row[8]
+-->
+  <!-- Footer -->
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">Team The 출석지킴이™</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+  <!-- Bootstrap core JavaScript -->
+	</form>
+</body>
+
+</html>

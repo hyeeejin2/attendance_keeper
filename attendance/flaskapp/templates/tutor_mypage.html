@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>출석지킴이</title>
+
+  <!-- Custom fonts for this template-->
+  <!-- 합쳐지고 최소화된 최신 CSS -->
+  <link href='../static/packages/core/main.css' rel='stylesheet'>
+  <link href='../static/packages/daygrid/main.css' rel='stylesheet'>
+  <script src='../static/packages/core/main.js'></script>
+  <script src='../static/packages/interaction/main.js'></script>
+  <script src='../static/packages/daygrid/main.js'></script>
+  <link href="../static/css/sb-admin-2.css" rel="stylesheet">
+  <link href="../static/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+  <script src="../static/vendor/jquery/jquery.min.js"></script>
+  <script src="../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="../static/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="../static/js/sb-admin-2.min.js"></script>
+
+  <!-- Page level plugins -->
+  <script src="../static/vendor/chart.js/Chart.min.js"></script>
+
+  <!-- Page level custom scripts -->
+
+  <!-- Custom styles for this template-->
+
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+      <!-- Sidebar - Brand -->
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <div class="sidebar-brand-icon rotate-n-0">
+          <img src="../static/img/withelogo.png" alt="..." style="width:65px;">
+        </div>
+        <div class="sidebar-brand-text mx-3">출석지킴이</div>
+      </a>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider my-0">
+
+      <!-- Nav Item - Dashboard -->
+      <li class="nav-item active">
+        <a class="nav-link" href="create_class.html">
+          <i class="fas fa-fw fa-tachometer-alt"></i>
+          <span>강의 추가</span></a>
+      </li>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider">
+
+      <!-- Heading -->
+      <div class="sidebar-heading">
+        Attendance Manage
+      </div>
+
+      <!-- Nav Item - Pages Collapse Menu -->
+      <!-- Nav Item - Utilities Collapse Menu -->
+      <!-- Divider -->
+      <!-- Nav Item - Pages Collapse Menu -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
+          <i class="fas fa-fw fa-folder"></i>
+          <span>내 강의 리스트</span>
+        </a>
+        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+          <div class="bg-white py-2 collapse-inner rounded" id="mylist">
+            <h6 class="collapse-header">현재 개설된 강의</h6>
+            <a href="#" class="start" title="hidden" hidden="true">NONE</a>
+            <script>
+            $(function(){
+              $.ajax({
+                url:"http://192.168.88.139:5000/tutorMypageProcess",
+                dataType:"json",
+                method:'POST',
+                success : function(json){
+			               var json_length=Object.keys(json['class_info']).length;
+			          for(var i=0; i < json_length; i++){
+				              var addA= document.createElement('a');
+				              addA.className = 'collapse-item'
+                      addA.href = `http://192.168.88.139:5000/tutorMypage?class_id=${json['class_info'][i]['ID']}`
+					            addA.innerText = `${json['class_info'][i]['NAME']}`
+				              $(".start").after(addA);
+                      html('<input type="hidden" name="class_id" value=""'+json["class_info"][i]['class_id']+'"></input>"');
+			                 }
+                       localStorage.lect_id = `${json['class_info'][0]['class_id']}`;
+                    }
+                  });
+                })
+            </script>
+            <script>
+              $(function(){
+                  $('.collapse-item').on('click','a',function(){
+                    lect_id = $('.class_id').val();
+                  })
+              });
+            </script>
+          </div>
+        </div>
+      </li>
+
+      <!-- Nav Item - Charts -->
+      <!-- Divider -->
+      <hr class="sidebar-divider d-none d-md-block">
+
+      <!-- Sidebar Toggler (Sidebar) -->
+      <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+      </div>
+
+    </ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+          <!-- Sidebar Toggle (Topbar) -->
+
+          <!-- Topbar Search -->
+          <h1 class="h3 mb-0 text-gray-800" id="Class_Name" name="class_name"></h1>
+          <script>
+            $(function(){
+              var lect_id = localStorage.lect_id;
+              $.ajax({
+                url:'http://localhost:5000/tutorInfo',
+                method:'POST',
+                dataType:'json',
+                async:false,
+                data:{
+                  class_id : lect_id
+                }
+              })
+              .done(function(json){
+                $('#Class_Name').after(`${json["class_info"][0]['class_name']}`)
+              })
+            })
+          </script>
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+
+            <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+            <li class="nav-item dropdown no-arrow d-sm-none">
+
+              <!-- Dropdown - Messages -->
+              <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
+
+              </div>
+            </li>
+
+            <!-- Nav Item - Alerts -->
+            <li class="nav-item dropdown no-arrow mx-1">
+              <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-bell fa-fw"></i>
+                <!-- Counter - Alerts -->
+              </a>
+              <!-- Dropdown - Alerts -->
+              <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
+                <h6 class="dropdown-header">
+                  Alerts Center
+                </h6>
+                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+              </div>
+            </li>
+
+            <!-- Nav Item - Messages -->
+            <li class="nav-item dropdown no-arrow mx-1">
+              <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-envelope fa-fw"></i>
+                <!-- Counter - Messages -->
+              </a>
+              <!-- Dropdown - Messages -->
+              <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="messagesDropdown">
+                <h6 class="dropdown-header">
+                  Message Center
+                </h6>
+                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
+              </div>
+            </li>
+            <div class="topbar-divider d-none d-sm-block"></div>
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small" id=user>빛승명</span>
+              </a>
+              <!-- Dropdown - User Information -->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Logout
+                </a>
+              </div>
+            </li>
+          </ul>
+        </nav>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+          <!-- Page Heading -->
+
+          <!-- Content Row -->
+
+          <div class="row">
+
+            <!-- Area Chart -->
+            <div class="col-xl-8 col-lg-7">
+              <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">학생의 평균 출석률</h6>
+                  <div class="dropdown no-arrow">
+                  </div>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                  <div class="chart-area">
+                    <script>
+                    // Set new default font family and font color to mimic Bootstrap's default styling
+                    $(function(){
+                      Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+                      Chart.defaults.global.defaultFontColor = '#858796';
+
+                      function number_format(number, decimals, dec_point, thousands_sep) {
+                        // *     example: number_format(1234.56, 2, ',', ' ');
+                        // *     return: '1 234,56'
+                        number = (number + '').replace(',', '').replace(' ', '');
+                        var n = !isFinite(+number) ? 0 : +number,
+                          prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+                          sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
+                          dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
+                          s = '',
+                          toFixedFix = function(n, prec) {
+                            var k = Math.pow(10, prec);
+                            return '' + Math.round(n * k) / k;
+                          };
+                        // Fix for IE parseFloat(0.55).toFixed(0) = 0;
+                        s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+                        if (s[0].length > 3) {
+                          s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+                        }
+                        if ((s[1] || '').length < prec) {
+                          s[1] = s[1] || '';
+                          s[1] += new Array(prec - s[1].length + 1).join('0');
+                        }
+                        return s.join(dec);
+                      }
+                    })
+                    // Area Chart Example
+                    $(function(){
+                      var lect_id = localStorage.lect_id;
+                      var student_id = localStorage.student_id;
+                      $.ajax({
+                        url:'http://localhost:5000/tutorLgraph',
+                        dataType:'json',
+                        method:'POST',
+                        data:{
+                          class_id : lect_id,
+                          tutee_id : student_id
+                        },
+                        success : function(json){
+                         var ctx = document.getElementById("myAreaChart");
+                         var time_length = Object.keys(json['time']).length;
+                         var data_length = Object.keys(json['data']).length;
+                         var times = [];
+                         var datas = [];
+                         for(var i=0; i < time_length; i++) {
+                           times.push(`${json['time'][i]}`);
+                           datas.push(`${json['data'][i]}`);
+                         }
+                         var myLineChart = new Chart(ctx, {
+                               type: 'line',
+                               data:{
+                               labels: times,
+                               datasets: [{
+                               label: "출석률",
+                               lineTension: 0.3,
+                               backgroundColor: "rgba(78, 115, 223, 0.05)",
+                               borderColor: "rgba(78, 115, 223, 1)",
+                               pointRadius: 2,
+                               pointBackgroundColor: "rgba(78, 115, 223, 1)",
+                               pointBorderColor: "rgba(78, 115, 223, 1)",
+                               pointHoverRadius: 2,
+                               pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+                               pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+                               pointHitRadius: 10,
+                               pointBorderWidth: 2,
+                               data: datas,
+                             }],
+                           },
+                           options: {
+                             maintainAspectRatio: false,
+                             layout: {
+                               padding: {
+                                 left: 10,
+                                 right: 25,
+                                 top: 25,
+                                 bottom: 0
+                               }
+                             },
+                             scales: {
+                               xAxes: [{
+                                 time: {
+                                   unit: 'time'
+                                 },
+                                 gridLines: {
+                                   display: false,
+                                   drawBorder: false
+                                 },
+                                 ticks: {
+                                   minTicksLimit: 5,
+                                   maxTicksLimit: 14
+                                 }
+                               }],
+                               yAxes: [{
+                                 ticks: {
+                                   maxTicksLimit: 3,
+                                   paddingBottem:10,
+                                   // Include a dollar sign in the ticks
+                                   callback: function(value, index, values) {
+                                     if(value == 0)
+                                       return '시작!';
+                                     else if (value == 1)
+                                       return '부재중';
+                                     else if(value == 2)
+                                       return '자리있음';
+                                   }
+                                 },
+                                 gridLines: {
+                                   color: "rgb(234, 236, 244)",
+                                   zeroLineColor: "rgb(234, 236, 244)",
+                                   drawBorder: false,
+                                   borderDash: [2],
+                                   zeroLineBorderDash: [2]
+                                 }
+                               }],
+                             },
+                             legend: {
+                               display: false
+                             },
+                             tooltips: {
+                               backgroundColor: "rgb(255,255,255)",
+                               bodyFontColor: "#858796",
+                               titleMarginBottom: 10,
+                               titleFontColor: '#6e707e',
+                               titleFontSize: 14,
+                               borderColor: '#dddfeb',
+                               borderWidth: 1,
+                               xPadding: 15,
+                               yPadding: 15,
+                               displayColors: false,
+                               intersect: false,
+                               mode: 'index',
+                               caretPadding: 10,
+                             }
+                           }
+                         });
+                       }
+                     });
+                   })
+                    </script>
+                  <script>
+                      $('.student_list').on('click','tr',function(){
+                        var lect_id = localStorage.lect_id;
+                        var student_id = localStorage.student_id;
+                        $.ajax({
+                          url:'http://localhost:5000/tutorLgraph',
+                          method:'GET',
+                          dataType:'json',
+                          data:{
+                            class_id : lect_id,
+                            tutee_id : student_id
+                          },
+                        })
+                        .done(function(json){
+                          var ctx = document.getElementById("myAreaChart");
+                          var time_length = Object.keys(json['time']).length;
+                          var data_length = Object.keys(json['data']).length;
+                          var times = [];
+                          var datas = [];
+                          for(var i=0; i < time_length; i++) {
+                            times.push(`${json['time'][i]}`);
+                            datas.push(`${json['data'][i]}`);
+                          }
+                          var myLineChart = new Chart(ctx, {
+                                type: 'line',
+                                data:{
+                                labels: times,
+                                datasets: [{
+                                label: "출석률",
+                                lineTension: 0.3,
+                                backgroundColor: "rgba(78, 115, 223, 0.05)",
+                                borderColor: "rgba(78, 115, 223, 1)",
+                                pointRadius: 2,
+                                pointBackgroundColor: "rgba(78, 115, 223, 1)",
+                                pointBorderColor: "rgba(78, 115, 223, 1)",
+                                pointHoverRadius: 2,
+                                pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+                                pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+                                pointHitRadius: 10,
+                                pointBorderWidth: 2,
+                                data: datas,
+                              }],
+                            },
+                            options: {
+                              maintainAspectRatio: false,
+                              layout: {
+                                padding: {
+                                  left: 10,
+                                  right: 25,
+                                  top: 25,
+                                  bottom: 0
+                                }
+                              },
+                              scales: {
+                                xAxes: [{
+                                  time: {
+                                    unit: 'time'
+                                  },
+                                  gridLines: {
+                                    display: false,
+                                    drawBorder: false
+                                  },
+                                  ticks: {
+                                    minTicksLimit: 5,
+                                    maxTicksLimit: 14
+                                  }
+                                }],
+                                yAxes: [{
+                                  ticks: {
+                                    maxTicksLimit: 3,
+                                    paddingBottem:10,
+                                    // Include a dollar sign in the ticks
+                                    callback: function(value, index, values) {
+                                      if(value == 0)
+                                        return '시작!';
+                                      else if (value == 1)
+                                        return '부재중';
+                                      else if(value == 2)
+                                        return '자리있음';
+                                    }
+                                  },
+                                  gridLines: {
+                                    color: "rgb(234, 236, 244)",
+                                    zeroLineColor: "rgb(234, 236, 244)",
+                                    drawBorder: false,
+                                    borderDash: [2],
+                                    zeroLineBorderDash: [2]
+                                  }
+                                }],
+                              },
+                              legend: {
+                                display: false
+                              },
+                              tooltips: {
+                                backgroundColor: "rgb(255,255,255)",
+                                bodyFontColor: "#858796",
+                                titleMarginBottom: 10,
+                                titleFontColor: '#6e707e',
+                                titleFontSize: 14,
+                                borderColor: '#dddfeb',
+                                borderWidth: 1,
+                                xPadding: 15,
+                                yPadding: 15,
+                                displayColors: false,
+                                intersect: false,
+                                mode: 'index',
+                                caretPadding: 10,
+                              }
+                            }
+                          });
+                        })
+                      })
+                    </script>
+                    <canvas id="myAreaChart"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-4 col-lg-5">
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">학생 리스트</h6>
+                </div>
+                <script>
+                  $(function(){
+                    var lect_id = localStorage.lect_id;
+                        $.ajax({
+                          dataType:'json',
+                          method:'GET',
+                          url:'http://192.168.88.140:5000/tutorStudentProcess',
+                          data:{class_id:lect_id},
+                          success: function(json){
+                            var num = Object.keys(json).length;
+                            for(var i=0;i<num;i++){
+                              var addTR = document.createElement('tr');
+                              var addTDnum = document.createElement('td');
+                              var addTDimg = document.createElement('td');
+                              var addTDname = document.createElement('td');
+                              var addTDenga = document.createElement('td');
+                              var addTDstatus = document.createElement('td');
+                              addTR.className = `tr_start_${i}`
+                              addTDnum.innerText = `${i}`
+                              addTDnum.className = 'number'
+                              addTDimg.className = `image`
+                              addTDimg.innerText = `<img style="width:20px;height:20px" src="../static/img/user.jpg"/>`
+                              addTDname.innerText= `${json["studentList"][i]['tutee_name']}`
+                              addTDname.className = `name`
+                              addTDenga.innerText= `${json["studentList"][i]['engagement']}`
+                              addTDenga.className = `enga`
+                              addTDstatus.innerText=`${json["studentList"][i]['status']}`
+                              $('tbody').append(addTR);
+                              $(`.tr_start_${i}`).append(addTDnum);
+                              $('.number').append(addTDimg);
+                              $('.image').append(addTDname);
+                              $('.name').append(addTDenga);
+                              $('.enga').append(addTDstatus);
+                              html('<input type="hidden" name="class_id" value=""'+json["studentList"][i]['class_id']+'"></input>"');
+                            }
+                            localStorage.student_id = `${json['studentList'][0]['tutee_id']}`;
+                          }
+                        });
+                      })
+                    </script>
+                <div class="card-body">
+                  <div class="overflow_f">
+                    <table class="student_list">
+                      <th scope="row">번호</th>
+                      <th scope="row">사진</th>
+                      <th scope="row">이름</th>
+                      <th scope="row">출석률</th>
+                      <th scope="row">출석결과</th>
+                        <tbody>
+                        </tbody>
+                      </table>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <!-- Pie Chart -->
+          </div>
+
+          <!-- Content Row -->
+          <div class="row">
+
+            <!-- Content Column -->
+            <div class="col-xl-4 col-lg-5">
+              <div class="card shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                  <h6 class="m-0 font-weight-bold text-primary">출결 현황</h6>
+                  <div class="dropdown no-arrow">
+                    <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                      <div class="dropdown-header">시간기준 설정</div>
+                      <a class="dropdown-item" href="#">오늘</a>
+                      <a class="dropdown-item" href="#">지난 한 주</a>
+                      <a class="dropdown-item" href="#">지난 한 달</a>
+                    </div>
+                  </div>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                  <div class="chart-pie pt-4 pb-2">
+                    <script>
+         $(function(){
+         Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+                   Chart.defaults.global.defaultFontColor = '#858796';
+         })
+                   // Pie Chart Example
+                   $(function(){
+                     var lect_id = localStorage.lect_id;
+                     $.ajax({
+                       url:'http://192.168.88.140:5000/graph2',
+                       method:'GET',
+                       dataType:'json',
+                       data:{class_id:lect_id},
+                       })
+                       .done(function(json){
+                         var datas = [];
+                         datas.push(`${json['my_graph'][4]['pass %']}`);
+			                   datas.push(`${json['my_graph'][5]['late %']}`);
+              		     	 datas.push(`${json['my_graph'][6]['fail %']}`);
+                       var ctx = document.getElementById("myPieChart");
+                       var myPieChart = new Chart(ctx, {
+                         type: 'doughnut',
+                         data: {
+                           labels: ["출석", "지각", "결석"],
+                           datasets: [{
+                             data: datas,
+                             backgroundColor: ['#1cc88a', '#eccc68', '#ff6b81'],
+                             hoverBackgroundColor: ['#17a673', '#ffa502', '#ff4757'],
+                             hoverBorderColor: "rgba(234, 236, 244, 1)",
+                           }],
+                         },
+                         options: {
+                           maintainAspectRatio: false,
+                           tooltips: {
+                             backgroundColor: "rgb(255,255,255)",
+                             bodyFontColor: "#858796",
+                             borderColor: '#dddfeb',
+                             borderWidth: 1,
+                             xPadding: 15,
+                             yPadding: 15,
+                             displayColors: false,
+                           },
+                           cutoutPercentage: 80,
+                         },
+                       });
+                     });
+                   })
+                   </script>
+                    <canvas id="myPieChart"></canvas>
+                  </div>
+                  <div class="mt-4 text-center small">
+                    <span class="mr-2">
+                      <i class="fas fa-circle text-success"></i> 출석
+                    </span>
+                    <span class="mr-2">
+                      <i class="fas fa-circle text-warning"></i> 지각
+                    </span>
+                    <span class="mr-2">
+                      <i class="fas fa-circle text-danger"></i> 결석
+                    </span>
+                  </div>
+                </div>
+                <div class="pie_table_">
+                  <script>
+                    $(function(){
+                      var lect_id = localStorage.lect_id;
+                      $.ajax({
+                        url:'/tutorOgraph',
+                        dataType:'json',
+                        method:'GET',
+                        data:{class_id:lect_id},
+                      })
+                      .done(function(json){
+                          $('#pie > tbody:last').append(
+                              '<tr><th>' + '출석' + '</th>' +
+                                '<td>' + `${json["my_graph"][0]["pass"]}` + '</td>' +
+                                '<td>' + `${json["my_graph"][4]["pass %"]}` + '</td></tr>');
+                          $('#pie > tbody:last').append(
+                              '<tr><th>' + '지각' + '</th>' +
+                                '<td>' + `${json["my_graph"][1]["late"]}`+ '</td>' +
+                                '<td>' + `${json["my_graph"][5]["late %"]}` + '</td></tr>');
+                          $('#pie > tbody:last').append(
+                              '<tr><th>' + '결석' + '</th>' +
+                                '<td>' + `${json["my_graph"][2]["fail"]}` + '</td>' +
+                                '<td>' + `${json["my_graph"][6]["fail %"]}` + '</td></tr>');
+                          $('#pie > tbody:last').append(
+                              '<tr><th>' + '총 인원' + '</th>' +
+                                '<td>' + `${json["my_graph"][3]["all"]}` + '</td>' +
+                                '<td>' + `${json["my_graph"][7]["all %"]}` + '</td></tr>');
+                        })
+                      })
+                  </script>
+                  <table class="pie_table" id="pie">
+                    <thead>
+                      <tr>
+                        <td></td>
+                        <th>인원</th>
+                        <th>퍼센트(%)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-8 mb-4">
+              <!-- Project Card Example -->
+              <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                  <h6 class="m-0 font-weight-bold text-primary">강의 일정</h6>
+                </div>
+                <script>
+                  document.addEventListener('DOMContentLoaded', function() {
+                    var calendarEl = document.getElementById('calendar');
+                    var calendar = new FullCalendar.Calendar(calendarEl, {
+                      plugins: [ 'interaction', 'dayGrid' ],
+                      defaultDate: '2019-08-12',
+                      editable: true,
+                      eventLimit: true, // allow "more" link when too many events
+                      events: [
+                        {
+                          title: '소개딩',
+                          start: '2019-08-22',
+                          end: '2019-08-24'
+                        }
+                      ]
+                    });
+                    calendar.render();
+                  });
+                </script>
+                <div id="calendar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /.container-fluid -->
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Team The 출석지킴이™</span>
+          </div>
+        </div>
+      </footer>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Logout Modal-->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-primary" href="login.html">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="../static/vendor/chart.js/Chart.min.js"></script>
+
+  <!-- Page level custom scripts -->
+
+</body>
+
+</html>

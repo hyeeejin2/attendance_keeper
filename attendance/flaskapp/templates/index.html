@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>출석지킴이 메인페이지</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom styles for this template -->
+  <link href="../static/css/modern-business.css" rel="stylesheet">
+
+  <script src="../static/vendor/jquery/jquery.min.js"></script>
+  <script src="../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark fixed-top" id="back_color">
+    <div class="container">
+      <a class="navbar-brand" href="https://210.89.188.20/">출석지킴이</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+	{% if error %}
+                <script>
+                        var obj = {{ error | safe }};
+                        alert(obj['error']);
+                </script>
+        {% endif %}
+        {% if not user %}
+          <li class="nav-item">
+            <a class="nav-link" href="https://210.89.188.20/login">로그인</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://210.89.188.20/tuteeSignup">튜티 회원가입(학생)</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://210.89.188.20/tutorSignup">튜터 회원가입(강의자)</a>
+          </li>
+	  {% endif %}
+          {% if user %}
+          <li class="nav-item" style="margin-top:8px; margin-rignt:5px; color:#fff;">
+                  {{ user+string }}
+          </li>
+          {% if tutor %}
+          <li class="nav-item">
+            <a class="nav-link" href="https://210.89.188.20/tutorMypage">마이페이지</a>
+          </li>
+	  {% endif %}
+          {% if tutee %}
+          <li class="nav-item">
+                  <a class="nav-link" href="https://210.89.188.20/tuteeMypage">마이페이지</a>
+          </li>
+          {% endif %}
+          <li class="nav-item">
+            <a class="nav-link" href="https://210.89.188.20/lectureList">강의 조회</a>
+          </li>
+	  <li class="nav-item">
+            <a class="nav-link" href="https://210.89.188.20/logout">로그아웃</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <header>
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+      <ol class="carousel-indicators">
+        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+      </ol>
+      <div class="carousel-inner" role="listbox">
+        <!-- Slide One - Set the background image for this slide in the line below -->
+        <div class="carousel-item active" style="background-image:url(../static/img/one.jpg) ">
+          <div class="carousel-caption d-none d-md-block">
+            <h3>첫번째 단계</h3>
+            <p>보다 쉬운 출석관리를 위해 저희의 서비스에 가입하세요!</p>
+          </div>
+        </div>
+        <!-- Slide Two - Set the background image for this slide in the line below -->
+        <div class="carousel-item" style="background-image: url(../static/img/two.jpg)">
+          <div class="carousel-caption d-none d-md-block">
+            <h3>두번째 단계</h3>
+            <p>원하시는 강의를 찾거나 조건을 만들어 강의를 생성하세요!</p>
+          </div>
+        </div>
+        <!-- Slide Three - Set the background image for this slide in the line below -->
+        <div class="carousel-item" style="background-image: url(../static/img/three.jpg)">
+          <div class="carousel-caption d-none d-md-block">
+            <h3>마지막 단계</h3>
+            <p>그저 Wi-Fi만 켜두세요! 모든것은 자동으로 될겁니다!</p>
+          </div>
+        </div>
+      </div>
+      <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <div class="container">
+
+    <h1 class="my-4">튜티 회원가입에서 사용하는 MAC 찾기 3단계</h1>
+    <h2 style="margin:0 0 20px;">안드로이드의 경우</h2>
+
+    <!-- Marketing Icons Section -->
+    <div class="row">
+      <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+          <h4 class="card-header">1단계</h4>
+          <div class="card-body">
+            <p class="card-text">설정에서 휴대폰 정보 또는 디바이스 정보로 들어가주세요</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+          <h4 class="card-header">2단계</h4>
+          <div class="card-body">
+            <p class="card-text">하드웨어 정보 또는 상태 메뉴로 들어가주세요</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+          <h4 class="card-header">3단계</h4>
+          <div class="card-body">
+            <p class="card-text">Wi-Fi MAC 주소의 부분을 메모해주시고 회원가입에서 사용해주세요!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h2 style="margin:0 0 20px;">아이폰의 경우</h2>
+    <div class="row">
+      <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+          <h4 class="card-header">1단계</h4>
+          <div class="card-body">
+            <p class="card-text">설정에서 일반으로 들어가주세요</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+          <h4 class="card-header">2단계</h4>
+          <div class="card-body">
+            <p class="card-text">일반 메뉴에서 정보로 들어가주세요</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+          <h4 class="card-header">3단계</h4>
+          <div class="card-body">
+            <p class="card-text">Wi-Fi주소 부분을 메모해주시고 회원가입에서 사용해주세요!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h2 style="margin:0 0 20px;">PC(Window)의 경우</h2>
+    <div class="row">
+      <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+          <h4 class="card-header">1단계</h4>
+          <div class="card-body">
+            <p class="card-text">'윈도우 키 + r' 키를 눌러 실행창을 실행시켜서 cmd를 입력해주세요</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+          <h4 class="card-header">2단계</h4>
+          <div class="card-body">
+            <p class="card-text">ipconfig를 입력후 enter키를 눌러주세요</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+          <h4 class="card-header">3단계</h4>
+          <div class="card-body">
+            <p class="card-text">Wi-Fi주소 부분을 메모해주시고 회원가입에서 사용해주세요!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.row -->
+  </div>
+  <!-- /.container -->
+
+  <!-- Footer -->
+  <footer class="py-5 bg-dark">
+    <div class="container">
+      <p class="m-0 text-center text-white">Team The 출석지킴이™</p>
+    </div>
+    <!-- /.container -->
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+
+</body>
+
+</html>
